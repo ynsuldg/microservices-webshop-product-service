@@ -14,7 +14,7 @@ import se.iths.martin.productserviceprojekt2.repository.StockReservationReposito
 
 import java.util.*;
 
-/** Intern grund för betalningsflödets reservationer; ännu inte exponerad som HTTP-endpoints. */
+/** Hanterar betalningsflödets reservationer bakom skyddade interna endpoints. */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -63,6 +63,18 @@ public class StockReservationService {
 
     // Återställer en aktiv reservation exakt en gång; en betald reservation får inte återställas.
     public void release(UUID id, String customerName) {
+        if (id == null || customerName == null || customerName.isBlank()) {
+            throw new IllegalArgumentException("Reservation ID and customer are required.");
+        }
+        if (reservations.findLockedById(id).isEmpty()) {
+            // Sparar avbrottet även om ett försenat reservationsanrop ännu inte hunnit fram.
+            var cancelled = new StockReservation();
+            cancelled.setId(id);
+            cancelled.setCustomerName(customerName);
+            cancelled.setStatus(StockReservation.Status.RELEASED);
+            reservations.saveAndFlush(cancelled);
+            return;
+        }
         var reservation = ownedReservation(id, customerName);
         if (reservation.getStatus() == StockReservation.Status.RELEASED) {
             return;

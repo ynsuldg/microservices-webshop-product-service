@@ -102,6 +102,16 @@ class StockReservationTests {
         }
     }
 
+    // Kontrollerar att ett avbrott som kommer före reservationen blockerar ett försenat reservationsanrop.
+    @Test
+    void releaseBeforeReservePreventsLateStockDeduction() {
+        var id = UUID.randomUUID();
+        service.release(id, "customer");
+        assertThrows(IllegalStateException.class, () -> service.reserve(id, "customer",
+                List.of(new ProductStockRequest(product.getId(), 2))));
+        assertEquals(10, stock());
+    }
+
     // Hämtar det aktuella lagersaldot från testdatabasen.
     private int stock() {
         return products.findById(product.getId()).orElseThrow().getStock();
