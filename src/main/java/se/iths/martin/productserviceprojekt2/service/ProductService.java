@@ -14,6 +14,7 @@ import se.iths.martin.productserviceprojekt2.model.Product;
 import se.iths.martin.productserviceprojekt2.repository.ProductRepository;
 
 import java.util.List;
+import java.util.Comparator;
 
 /**
  * Affärslogik för hantering av produkter. Ansvarar för CRUD operationer på produkter samt för att minska lagersaldo vid orderläggning.
@@ -85,8 +86,9 @@ public class ProductService {
      */
     @Transactional
     public List<ProductInfoDTO> decreaseStock(List<ProductStockRequest> stockRequests) {
-        List<Product> products = stockRequests.stream().map(req -> {
-            Product pro = productRepository.findById(req.getProductId()).orElseThrow(() -> new ProductNotFoundException(req.getProductId()));
+        List<Product> products = stockRequests.stream()
+                .sorted(Comparator.comparing(ProductStockRequest::getProductId)).map(req -> {
+            Product pro = productRepository.findLockedById(req.getProductId()).orElseThrow(() -> new ProductNotFoundException(req.getProductId()));
             if (pro.getStock() < req.getQuantity()) {
                 throw new InsufficientStockException(pro.getName(), req.getQuantity(), pro.getStock());
             }
