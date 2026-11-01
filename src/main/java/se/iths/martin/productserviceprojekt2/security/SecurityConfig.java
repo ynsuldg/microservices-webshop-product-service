@@ -3,6 +3,7 @@ package se.iths.martin.productserviceprojekt2.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,6 +39,8 @@ public class SecurityConfig {
      * kräver en giltig JWT.
      *
      * @param http Spring Securitys konfigurationsobjekt
+     * Den publika statussidan är tillgänglig utan JWT; API-anrop behåller sina åtkomstkrav.
+     *
      * @return den byggda filterkedjan
      * @throws Exception om konfigurationen misslyckas att byggas
      */
@@ -48,6 +51,7 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/", "/index.html").permitAll()
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
