@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Innehåller produktnamn, pris och antal för en order eller lagerreservation.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

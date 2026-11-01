@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Anger produkt-id och det antal som ska reserveras eller dras från lagret.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

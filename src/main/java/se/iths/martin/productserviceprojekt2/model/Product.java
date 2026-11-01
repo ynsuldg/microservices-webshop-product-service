@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Lagrar produktens beskrivning, pris, lagersaldo, kategori och bildadress.
+ */
 @Entity
 @Table(name = "products")
 @Getter

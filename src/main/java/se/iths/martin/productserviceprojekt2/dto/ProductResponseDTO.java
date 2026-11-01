@@ -8,6 +8,9 @@ import se.iths.martin.productserviceprojekt2.model.Category;
 
 import java.math.BigDecimal;
 
+/**
+ * Innehåller produktuppgifterna som returneras av API:et.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

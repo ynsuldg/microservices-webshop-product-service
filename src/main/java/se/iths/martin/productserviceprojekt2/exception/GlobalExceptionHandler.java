@@ -11,23 +11,50 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Översätter produkt- och valideringsfel till HTTP-svar med felinformation.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    /**
+     * Returnerar HTTP 404 när produkten saknas.
+     *
+     * @param ex felet som ska översättas till ett HTTP-svar
+     * @return HTTP-svar med statuskod och eventuell svarskropp
+     */
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleProductNotFound(ProductNotFoundException ex) {
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    /**
+     * Returnerar HTTP 409 när lagret inte räcker.
+     *
+     * @param ex felet som ska översättas till ett HTTP-svar
+     * @return HTTP-svar med statuskod och eventuell svarskropp
+     */
     @ExceptionHandler(InsufficientStockException.class)
     public ResponseEntity<Map<String, Object>> handleInsufficientStock(InsufficientStockException ex) {
         return buildError(HttpStatus.CONFLICT, ex.getMessage());
     }
 
+    /**
+     * Returnerar HTTP 403 när åtkomst nekas.
+     *
+     * @param ex felet som ska översättas till ett HTTP-svar
+     * @return HTTP-svar med statuskod och eventuell svarskropp
+     */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
         return buildError(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
+    /**
+     * Returnerar HTTP 400 med information om ogiltiga fält.
+     *
+     * @param ex felet som ska översättas till ett HTTP-svar
+     * @return HTTP-svar med statuskod och eventuell svarskropp
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()
@@ -37,6 +64,12 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.BAD_REQUEST, message);
     }
 
+    /**
+     * Returnerar HTTP 500 för oväntade fel.
+     *
+     * @param ex felet som ska översättas till ett HTTP-svar
+     * @return HTTP-svar med statuskod och eventuell svarskropp
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
         return buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
