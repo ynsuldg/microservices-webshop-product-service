@@ -22,7 +22,16 @@ public class StockReservationService {
     private final ProductRepository products;
     private final StockReservationRepository reservations;
 
-    // Reserverar lagret en gång per reservations-id och returnerar produktuppgifter från backend.
+    /**
+     * Reserverar lagret en gång per reservations-id och returnerar produktuppgifter från backend.
+     *
+     * Ingår i betalningsflödet.
+     *
+     * @param id id för den efterfrågade posten eller reservationen
+     * @param customerName namnet på kunden som äger reservationen
+     * @param requests produkter och antal som ska reserveras
+     * @return reserverade produkter med pris och antal
+     */
     public List<ProductInfoDTO> reserve(UUID id, String customerName, List<ProductStockRequest> requests) {
         validate(id, customerName, requests);
         var existing = reservations.findLockedById(id);
@@ -61,7 +70,14 @@ public class StockReservationService {
         return toProducts(reservation);
     }
 
-    // Återställer en aktiv reservation exakt en gång; en betald reservation får inte återställas.
+    /**
+     * Återställer en aktiv reservation exakt en gång; en betald reservation får inte återställas.
+     *
+     * Ingår i betalningsflödet.
+     *
+     * @param id id för den efterfrågade posten eller reservationen
+     * @param customerName namnet på kunden som äger reservationen
+     */
     public void release(UUID id, String customerName) {
         if (id == null || customerName == null || customerName.isBlank()) {
             throw new IllegalArgumentException("Reservation ID and customer are required.");
@@ -91,7 +107,14 @@ public class StockReservationService {
         reservation.setStatus(StockReservation.Status.RELEASED);
     }
 
-    // Slutför en reservation efter betalning utan att minska lagret en gång till.
+    /**
+     * Slutför en reservation efter betalning utan att minska lagret en gång till.
+     *
+     * Ingår i betalningsflödet.
+     *
+     * @param id id för den efterfrågade posten eller reservationen
+     * @param customerName namnet på kunden som äger reservationen
+     */
     public void consume(UUID id, String customerName) {
         var reservation = ownedReservation(id, customerName);
         if (reservation.getStatus() == StockReservation.Status.RELEASED) {

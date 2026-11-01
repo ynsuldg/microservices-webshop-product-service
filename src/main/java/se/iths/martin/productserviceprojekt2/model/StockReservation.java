@@ -26,6 +26,9 @@ public class StockReservation {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Item> items = new ArrayList<>();
 
+    /**
+     * Anger om lagerreservationen är aktiv, frigjord eller förbrukad.
+     */
     public enum Status { ACTIVE, RELEASED, CONSUMED }
 
     /** Produkt-id, antal och pris sparas så att reservationen kan återställas eller läsas igen. */

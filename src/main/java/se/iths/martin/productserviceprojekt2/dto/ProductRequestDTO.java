@@ -9,6 +9,9 @@ import se.iths.martin.productserviceprojekt2.model.Category;
 
 import java.math.BigDecimal;
 
+/**
+ * Innehåller validerade uppgifter för att skapa en produkt.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
